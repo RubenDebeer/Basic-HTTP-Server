@@ -1,6 +1,7 @@
 const http = require('http');
 const host = 'localhost';
-const port = 8000;
+const fs = require('fs').promises;
+const port = 8080;
 
 /*Send a Json object
 const requestListerner = function(request, response){
@@ -24,10 +25,21 @@ const requestListerner = function(request, response){
 }
  */
 
+// Create a request listener that will render a HTML page 
 //Send HTML pages to be rendered
+const requestListener = function(request,response){
+    fs.readFile(__dirname + "/index.html")
+    .then( constents => {response.setHeader('Constent-Type','text/HTML')
+    response.writeHead(200);
+    response.end(constents);})
+    .catch(err => {
+        response.writeHead(500);
+        response.end("NOt working");//Usuall render a HTML error page
+        return;
+    })
+}
 
-
-const server = http.createServer(requestListerner());
+const server = http.createServer(requestListener);
 
 server.listen(port,host, ()=>{
     console.log(`Server is running on http://${port} : ${host}`);
